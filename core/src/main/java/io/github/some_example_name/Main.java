@@ -13,14 +13,14 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         shape = new ShapeRenderer();
-        nave = new NaveJogador(100,360,50,50,100,250);
+        nave = new NaveJogador(100, 360, 100, 50, 100, 250);
     }
 
     @Override
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        nave.Mover(Gdx.graphics.getDeltaTime());
+        nave.mover(Gdx.graphics.getDeltaTime());
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(Color.YELLOW);

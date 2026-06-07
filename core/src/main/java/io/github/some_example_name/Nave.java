@@ -8,28 +8,28 @@ abstract public class Nave {
     protected int hp;
     protected float velocidade;
 
-    public Nave(float posX,float posY,int tamX,int tamY, int hp, float velocidade){
-        this.posX=posX;
-        this.posY=posY;
-        this.tamX=tamX;
-        this.tamY=tamY;
-        this.hp=hp;
-        this.velocidade=velocidade;
+    public Nave(float posX, float posY, int tamX, int tamY, int hp, float velocidade) {
+        this.posX = posX;
+        this.posY = posY;
+        this.tamX = tamX;
+        this.tamY = tamY;
+        this.hp = hp;
+        this.velocidade = velocidade;
     }
 
-    public float getPosicaoX(){
+    public float getPosicaoX() {
         return posX;
     }
 
-    public float getPosicaoY(){
+    public float getPosicaoY() {
         return posY;
     }
 
-    public int getTamanhoX(){
+    public int getTamanhoX() {
         return tamX;
     }
 
-    public int getTamanhoY(){
+    public int getTamanhoY() {
         return tamY;
     }
 }
