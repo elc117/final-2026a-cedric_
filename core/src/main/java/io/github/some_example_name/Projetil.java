@@ -37,4 +37,8 @@ public class Projetil {
         return tamY;
     }
 
+    public boolean saiuDaTela(float larguraTela){
+        return posX>larguraTela;
+    }
+
 }

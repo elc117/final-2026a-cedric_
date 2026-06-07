@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 public class NaveJogador extends Nave {
+    private float tempoUltimoTiro;
+    private float intervaloTiro=0.15f;
+
     public NaveJogador(float posX, float posY, int tamX, int tamY, int hp, float velocidade) {
         super(posX, posY, tamX, tamY, hp, velocidade);
     }
@@ -26,4 +29,17 @@ public class NaveJogador extends Nave {
         }
 
     }
+
+    public Projetil atirar(float delta) {
+        tempoUltimoTiro = tempoUltimoTiro + delta;
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && tempoUltimoTiro >= intervaloTiro) {
+            tempoUltimoTiro=0;
+            Projetil p = new Projetil((posX+tamX),(posY+tamY/2));
+            return p;
+        }else{
+            return null;
+        }
+
+    }
+
 }

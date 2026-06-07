@@ -3,12 +3,12 @@ package io.github.some_example_name;
 abstract public class Nave {
     protected float posX;
     protected float posY;
-    protected int tamX;
-    protected int tamY;
+    protected float tamX;
+    protected float tamY;
     protected int hp;
     protected float velocidade;
 
-    public Nave(float posX, float posY, int tamX, int tamY, int hp, float velocidade) {
+    public Nave(float posX, float posY, float tamX, float tamY, int hp, float velocidade) {
         this.posX = posX;
         this.posY = posY;
         this.tamX = tamX;
@@ -25,11 +25,11 @@ abstract public class Nave {
         return posY;
     }
 
-    public int getTamanhoX() {
+    public float getTamanhoX() {
         return tamX;
     }
 
-    public int getTamanhoY() {
+    public float getTamanhoY() {
         return tamY;
     }
 }
