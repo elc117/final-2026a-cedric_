@@ -32,4 +32,17 @@ abstract public class Nave {
     public float getTamanhoY() {
         return tamY;
     }
+
+    public void receberDano(int dano) {
+        hp = hp - dano;
+    }
+
+    public Boolean estaMorto() {
+        if (hp <= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

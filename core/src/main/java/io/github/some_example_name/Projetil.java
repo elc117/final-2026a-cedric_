@@ -17,6 +17,10 @@ public class Projetil {
         this.dano = dano;
     }
 
+    public int getDano() {
+        return dano;
+    }
+
     public void atualizar(float delta) {
         posX = posX + velocidade * delta;
     }
@@ -37,8 +41,9 @@ public class Projetil {
         return tamY;
     }
 
-    public boolean saiuDaTela(float larguraTela){
-        return posX>larguraTela;
+    public boolean saiuDaTela(float larguraTela) {
+        return posX > larguraTela;
     }
+
 
 }
