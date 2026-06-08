@@ -5,7 +5,7 @@ public class Projetil {
     private float posY;
     private int tamX = 20;
     private int tamY = 10;
-    private float velocidade = 600;
+    private float velocidade = 700;
     private int dano = 1;
 
     public Projetil(float posX, float posY) {

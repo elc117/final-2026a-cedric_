@@ -11,12 +11,15 @@ public class Main extends ApplicationAdapter {
     private ShapeRenderer shape;
     private NaveJogador nave;
     private Array<Projetil> projeteis;
+    private Array<Inimigo> inimigos;
 
     @Override
     public void create() {
         shape = new ShapeRenderer();
-        nave = new NaveJogador(100, 360, 100, 50, 100, 250);
+        nave = new NaveJogador(100, 360, 100, 50, 100, 400);
         projeteis = new Array<Projetil>();
+        inimigos = new Array<Inimigo>();
+        inimigos.add(new InimigoComum(1280, 360, 50, 50, 3, 150));
     }
 
     @Override
@@ -38,9 +41,18 @@ public class Main extends ApplicationAdapter {
             }
         }
 
+        for (int i = inimigos.size - 1; i >= 0; i--) {
+            Inimigo ini = inimigos.get(i);
+            ini.atualizar(delta);
+        }
+
         nave.mover(delta);
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setColor(Color.GREEN);
+        for (Inimigo ini : inimigos) {
+            shape.rect(ini.getPosicaoX(), ini.getPosicaoY(), ini.getTamanhoX(), ini.getTamanhoY());
+        }
         shape.setColor(Color.RED);
         for (Projetil p : projeteis) {
             shape.rect(p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY());
