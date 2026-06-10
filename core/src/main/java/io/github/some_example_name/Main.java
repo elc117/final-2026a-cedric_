@@ -35,6 +35,9 @@ public class Main extends ApplicationAdapter {
         Projetil novo = nave.atirar(delta);
         if (novo != null) {
             projeteis.add(novo);
+            for (NaveAuxiliar aux : auxiliares) {
+                projeteis.add(aux.atirar());
+            }
         }
 
         for (int i = projeteis.size - 1; i >= 0; i--) {

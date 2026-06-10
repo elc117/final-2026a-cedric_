@@ -16,5 +16,8 @@ public class NaveAuxiliar extends Nave {
         atualizarCaixa();
     }
 
-
+    public Projetil atirar(){
+        Projetil p = new Projetil((posX+tamX),(posY+tamY/2));
+        return p;
+    }
 }
