@@ -1,4 +1,5 @@
 package io.github.some_example_name;
+import com.badlogic.gdx.math.Rectangle;
 
 abstract public class Nave {
     protected float posX;
@@ -7,6 +8,7 @@ abstract public class Nave {
     protected float tamY;
     protected int hp;
     protected float velocidade;
+    private Rectangle caixa;
 
     public Nave(float posX, float posY, float tamX, float tamY, int hp, float velocidade) {
         this.posX = posX;
@@ -15,6 +17,7 @@ abstract public class Nave {
         this.tamY = tamY;
         this.hp = hp;
         this.velocidade = velocidade;
+        caixa = new Rectangle(posX, posY, tamX, tamY);
     }
 
     public float getPosicaoX() {
@@ -33,6 +36,10 @@ abstract public class Nave {
         return tamY;
     }
 
+    public Rectangle getCaixa() {
+        return caixa;
+    }
+
     public void receberDano(int dano) {
         hp = hp - dano;
     }
@@ -43,6 +50,10 @@ abstract public class Nave {
         } else {
             return false;
         }
+    }
+
+    protected void atualizarCaixa() {
+        caixa.set(posX, posY, tamX, tamY);
     }
 
 }

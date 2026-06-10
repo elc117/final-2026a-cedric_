@@ -1,5 +1,7 @@
 package io.github.some_example_name;
 
+import com.badlogic.gdx.math.Rectangle;
+
 public class Projetil {
     private float posX;
     private float posY;
@@ -7,10 +9,13 @@ public class Projetil {
     private int tamY = 10;
     private float velocidade = 700;
     private int dano = 1;
+    private Rectangle caixa;
 
     public Projetil(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
+        caixa = new Rectangle(posX, posY, tamX, tamY);
+
     }
 
     public void setDano(int dano) {
@@ -21,8 +26,13 @@ public class Projetil {
         return dano;
     }
 
+    public Rectangle getCaixa() {
+        return caixa;
+    }
+
     public void atualizar(float delta) {
         posX = posX + velocidade * delta;
+        caixa.set(posX, posY, tamX, tamY);
     }
 
     public float getPosicaoX() {

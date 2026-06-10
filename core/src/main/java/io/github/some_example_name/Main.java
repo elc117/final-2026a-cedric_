@@ -12,6 +12,7 @@ public class Main extends ApplicationAdapter {
     private NaveJogador nave;
     private Array<Projetil> projeteis;
     private Array<Inimigo> inimigos;
+    private int pontuacao=0;
 
     @Override
     public void create() {
@@ -44,6 +45,22 @@ public class Main extends ApplicationAdapter {
         for (int i = inimigos.size - 1; i >= 0; i--) {
             Inimigo ini = inimigos.get(i);
             ini.atualizar(delta);
+        }
+
+        for(int i = projeteis.size -1; i >=0; i--){
+            Projetil p = projeteis.get(i);
+            for (int j = inimigos.size - 1; j >= 0; j--){
+                Inimigo ini = inimigos.get(j);
+                if (p.getCaixa().overlaps(ini.getCaixa())) {
+                    ini.receberDano(p.getDano());
+                    projeteis.removeIndex(i);
+                    if (ini.estaMorto()) {
+                        inimigos.removeIndex(j);
+                        pontuacao += 100;
+                    }
+                    break;
+                }
+            }
         }
 
         nave.mover(delta);

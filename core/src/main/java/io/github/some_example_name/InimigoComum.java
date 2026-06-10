@@ -9,6 +9,6 @@ public class InimigoComum extends Inimigo{
     @Override
     public void atualizar(float delta){
         posX=posX-velocidade*delta;
-
+        atualizarCaixa();
     }
 }
