@@ -12,6 +12,7 @@ public class Main extends ApplicationAdapter {
     private NaveJogador nave;
     private Array<Projetil> projeteis;
     private Array<Inimigo> inimigos;
+    private Array<PowerUp> powerups;
     private int pontuacao=0;
     private Esquadrao esquadrao;
 
@@ -22,11 +23,9 @@ public class Main extends ApplicationAdapter {
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
         inimigos.add(new InimigoComum(1280, 360, 50, 50, 3, 150));
+        powerups = new Array<PowerUp>();
+        powerups.add(new PowerUp(1280, 300));
         esquadrao = new Esquadrao(nave);
-        esquadrao.adicionarAuxiliar();
-        esquadrao.adicionarAuxiliar();
-        esquadrao.adicionarAuxiliar();
-        esquadrao.adicionarAuxiliar();
     }
 
     @Override
@@ -68,6 +67,17 @@ public class Main extends ApplicationAdapter {
 
         esquadrao.mover(delta);
 
+        for (int i = powerups.size - 1; i >= 0; i--) {
+            PowerUp pu = powerups.get(i);
+            pu.atualizar(delta);
+            if (pu.saiuDaTela()) {
+                powerups.removeIndex(i);
+            } else if (nave.getCaixa().overlaps(pu.getCaixa())) {
+                esquadrao.adicionarAuxiliar();
+                powerups.removeIndex(i);
+            }
+        }
+
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(Color.GREEN);
         for (Inimigo ini : inimigos) {
@@ -84,6 +94,11 @@ public class Main extends ApplicationAdapter {
 
         for(NaveAuxiliar aux : esquadrao.getAuxiliares()){
             shape.rect(aux.getPosicaoX(), aux.getPosicaoY(), aux.getTamanhoX(), aux.getTamanhoY());
+        }
+
+        shape.setColor(Color.CYAN);
+        for (PowerUp pu : powerups) {
+            shape.rect(pu.getPosicaoX(), pu.getPosicaoY(), pu.getTamanhoX(), pu.getTamanhoY());
         }
         shape.end();
     }

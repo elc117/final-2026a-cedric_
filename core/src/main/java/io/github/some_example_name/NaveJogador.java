@@ -30,6 +30,8 @@ public class NaveJogador extends Nave {
 
         posX = Math.max(0, Math.min(posX, Gdx.graphics.getWidth() - tamX));
         posY = Math.max(0, Math.min(posY, Gdx.graphics.getHeight() - tamY));
+
+        atualizarCaixa();
     }
 
     public Projetil atirar(float delta) {
