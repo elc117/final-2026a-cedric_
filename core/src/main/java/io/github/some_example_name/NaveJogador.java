@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 
 public class NaveJogador extends Nave {
     private float tempoUltimoTiro;
-    private float intervaloTiro=0.15f;
+    private float intervaloTiro=0.22f;
 
     public NaveJogador(float posX, float posY, int tamX, int tamY, int hp, float velocidade) {
         super(posX, posY, tamX, tamY, hp, velocidade);
@@ -28,6 +28,8 @@ public class NaveJogador extends Nave {
             posY = posY - velocidade * delta;
         }
 
+        posX = Math.max(0, Math.min(posX, Gdx.graphics.getWidth() - tamX));
+        posY = Math.max(0, Math.min(posY, Gdx.graphics.getHeight() - tamY));
     }
 
     public Projetil atirar(float delta) {

@@ -6,7 +6,7 @@ public class Esquadrao {
     private NaveJogador lider;
     private Array<NaveAuxiliar> auxiliares;
     private float[] offsetsX = {-30, -30, -60, -60};
-    private float[] offsetsY = {45, -45, 90, -90};
+    private float[] offsetsY = {25, -25, 50, -50};
     private static final int MAX_AUXILIARES = 4;
 
     public Esquadrao(NaveJogador lider) {

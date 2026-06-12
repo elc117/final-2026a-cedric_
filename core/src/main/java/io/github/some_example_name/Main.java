@@ -18,11 +18,14 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         shape = new ShapeRenderer();
-        nave = new NaveJogador(100, 360, 60, 30, 100, 400);
+        nave = new NaveJogador(100, 360, 40, 15, 100, 400);
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
         inimigos.add(new InimigoComum(1280, 360, 50, 50, 3, 150));
         esquadrao = new Esquadrao(nave);
+        esquadrao.adicionarAuxiliar();
+        esquadrao.adicionarAuxiliar();
+        esquadrao.adicionarAuxiliar();
         esquadrao.adicionarAuxiliar();
     }
 

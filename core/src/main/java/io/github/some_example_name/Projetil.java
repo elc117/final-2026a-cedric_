@@ -7,7 +7,7 @@ public class Projetil {
     private float posY;
     private int tamX = 20;
     private int tamY = 10;
-    private float velocidade = 700;
+    private float velocidade = 1000;
     private int dano = 1;
     private Rectangle caixa;
 
