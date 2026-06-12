@@ -13,7 +13,7 @@ public class Main extends ApplicationAdapter {
     private Array<Projetil> projeteis;
     private Array<Inimigo> inimigos;
     private int pontuacao=0;
-    private Array<NaveAuxiliar> auxiliares;
+    private Esquadrao esquadrao;
 
     @Override
     public void create() {
@@ -22,8 +22,8 @@ public class Main extends ApplicationAdapter {
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
         inimigos.add(new InimigoComum(1280, 360, 50, 50, 3, 150));
-        auxiliares= new Array<NaveAuxiliar>();
-        auxiliares.add(new NaveAuxiliar(-30,45, nave));
+        esquadrao = new Esquadrao(nave);
+        esquadrao.adicionarAuxiliar();
     }
 
     @Override
@@ -32,13 +32,7 @@ public class Main extends ApplicationAdapter {
 
         float delta = Gdx.graphics.getDeltaTime();
 
-        Projetil novo = nave.atirar(delta);
-        if (novo != null) {
-            projeteis.add(novo);
-            for (NaveAuxiliar aux : auxiliares) {
-                projeteis.add(aux.atirar());
-            }
-        }
+        esquadrao.atirar(delta, projeteis);
 
         for (int i = projeteis.size - 1; i >= 0; i--) {
             Projetil p = projeteis.get(i);
@@ -69,11 +63,7 @@ public class Main extends ApplicationAdapter {
             }
         }
 
-        nave.mover(delta);
-
-        for(NaveAuxiliar aux : auxiliares){
-            aux.seguir(nave);
-        }
+        esquadrao.mover(delta);
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(Color.GREEN);
@@ -89,7 +79,7 @@ public class Main extends ApplicationAdapter {
 
         shape.setColor(Color.ORANGE);
 
-        for(NaveAuxiliar aux : auxiliares){
+        for(NaveAuxiliar aux : esquadrao.getAuxiliares()){
             shape.rect(aux.getPosicaoX(), aux.getPosicaoY(), aux.getTamanhoX(), aux.getTamanhoY());
         }
         shape.end();
