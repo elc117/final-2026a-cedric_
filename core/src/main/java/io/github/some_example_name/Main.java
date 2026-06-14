@@ -2,8 +2,11 @@ package io.github.some_example_name;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 
@@ -17,10 +20,20 @@ public class Main extends ApplicationAdapter {
     private Esquadrao esquadrao;
     private GerenciadorOndas gerenciador;
     private GerenciadorPowerUps gerenciadorPowerUps;
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private boolean gameOver;
 
     @Override
     public void create() {
         shape = new ShapeRenderer();
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.getData().setScale(2f);
+        iniciar();
+    }
+
+    private void iniciar() {
         nave = new NaveJogador(100, 360, 40, 15, 100, 400);
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
@@ -28,6 +41,8 @@ public class Main extends ApplicationAdapter {
         esquadrao = new Esquadrao(nave);
         gerenciador = new GerenciadorOndas();
         gerenciadorPowerUps = new GerenciadorPowerUps();
+        pontuacao = 0;
+        gameOver = false;
     }
 
     @Override
@@ -35,6 +50,20 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float delta = Gdx.graphics.getDeltaTime();
+
+        if (gameOver) {
+            int largura = Gdx.graphics.getWidth();
+            int altura = Gdx.graphics.getHeight();
+            batch.begin();
+            font.draw(batch, "GAME OVER", largura / 2f - 90, altura / 2f + 60);
+            font.draw(batch, "Pontuacao: " + pontuacao, largura / 2f - 90, altura / 2f);
+            font.draw(batch, "ENTER para recomecar", largura / 2f - 130, altura / 2f - 60);
+            batch.end();
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                iniciar();
+            }
+            return;
+        }
 
         esquadrao.atirar(delta, projeteis);
 
@@ -73,6 +102,16 @@ public class Main extends ApplicationAdapter {
         }
 
         esquadrao.mover(delta);
+
+        for (int i = inimigos.size - 1; i >= 0; i--) {
+            Inimigo ini = inimigos.get(i);
+            if (esquadrao.colideCom(ini.getCaixa())) {
+                inimigos.removeIndex(i);
+                if (!esquadrao.removerAuxiliar()) {
+                    gameOver = true;
+                }
+            }
+        }
 
         if (!esquadrao.estaCheio()) {
             gerenciadorPowerUps.atualizar(delta, powerups);
@@ -117,10 +156,13 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         shape.dispose();
+        batch.dispose();
+        font.dispose();
     }
 
     @Override
     public void resize(int width, int height) {
         shape.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
     }
 }

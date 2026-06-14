@@ -1,5 +1,6 @@
 package io.github.some_example_name;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 public class Esquadrao {
@@ -43,6 +44,26 @@ public class Esquadrao {
         nova.seguir(lider);
         auxiliares.add(nova);
         return true;
+    }
+
+    public boolean colideCom(Rectangle caixa) {
+        if (lider.getCaixa().overlaps(caixa)) {
+            return true;
+        }
+        for (NaveAuxiliar aux : auxiliares) {
+            if (aux.getCaixa().overlaps(caixa)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean removerAuxiliar() {
+        if (auxiliares.size > 0) {
+            auxiliares.removeIndex(auxiliares.size - 1);
+            return true;
+        }
+        return false;
     }
 
     public NaveJogador getLider() {
