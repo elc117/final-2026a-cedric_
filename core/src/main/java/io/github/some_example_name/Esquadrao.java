@@ -31,6 +31,10 @@ public class Esquadrao {
         }
     }
 
+    public boolean estaCheio() {
+        return auxiliares.size >= MAX_AUXILIARES;
+    }
+
     public boolean adicionarAuxiliar() {
         if (auxiliares.size >= MAX_AUXILIARES) {
             return false;

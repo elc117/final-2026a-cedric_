@@ -16,6 +16,7 @@ public class Main extends ApplicationAdapter {
     private int pontuacao=0;
     private Esquadrao esquadrao;
     private GerenciadorOndas gerenciador;
+    private GerenciadorPowerUps gerenciadorPowerUps;
 
     @Override
     public void create() {
@@ -24,9 +25,9 @@ public class Main extends ApplicationAdapter {
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
         powerups = new Array<PowerUp>();
-        powerups.add(new PowerUp(1280, 300));
         esquadrao = new Esquadrao(nave);
         gerenciador = new GerenciadorOndas();
+        gerenciadorPowerUps = new GerenciadorPowerUps();
     }
 
     @Override
@@ -72,6 +73,10 @@ public class Main extends ApplicationAdapter {
         }
 
         esquadrao.mover(delta);
+
+        if (!esquadrao.estaCheio()) {
+            gerenciadorPowerUps.atualizar(delta, powerups);
+        }
 
         for (int i = powerups.size - 1; i >= 0; i--) {
             PowerUp pu = powerups.get(i);
