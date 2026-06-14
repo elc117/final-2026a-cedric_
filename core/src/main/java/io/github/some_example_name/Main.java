@@ -15,6 +15,7 @@ public class Main extends ApplicationAdapter {
     private Array<PowerUp> powerups;
     private int pontuacao=0;
     private Esquadrao esquadrao;
+    private GerenciadorOndas gerenciador;
 
     @Override
     public void create() {
@@ -22,10 +23,10 @@ public class Main extends ApplicationAdapter {
         nave = new NaveJogador(100, 360, 40, 15, 100, 400);
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
-        inimigos.add(new InimigoComum(1280, 360, 50, 50, 3, 150));
         powerups = new Array<PowerUp>();
         powerups.add(new PowerUp(1280, 300));
         esquadrao = new Esquadrao(nave);
+        gerenciador = new GerenciadorOndas();
     }
 
     @Override
@@ -44,9 +45,14 @@ public class Main extends ApplicationAdapter {
             }
         }
 
+        gerenciador.atualizar(delta, inimigos);
+
         for (int i = inimigos.size - 1; i >= 0; i--) {
             Inimigo ini = inimigos.get(i);
             ini.atualizar(delta);
+            if (ini.saiuDaTela()) {
+                inimigos.removeIndex(i);
+            }
         }
 
         for(int i = projeteis.size -1; i >=0; i--){

@@ -7,4 +7,8 @@ public abstract class Inimigo extends Nave {
     }
 
     public abstract void atualizar(float delta);
+
+    public boolean saiuDaTela() {
+        return posX + tamX < 0;
+    }
 }
