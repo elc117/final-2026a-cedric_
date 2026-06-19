@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class GerenciadorPowerUps {
     private float tempoDesdeSpawn = 0;
-    private float intervaloSpawn = 8f;
+    private float intervaloSpawn = 16f;
 
     public void atualizar(float delta, Array<PowerUp> powerups) {
         tempoDesdeSpawn = tempoDesdeSpawn + delta;
