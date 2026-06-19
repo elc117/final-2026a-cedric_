@@ -1,0 +1,13 @@
+{
+  "name": "TrabalhoParadigmas (libGDX)",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "postCreateCommand": "chmod +x ./gradlew",
+  "forwardPorts": [8080],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  }
+}
