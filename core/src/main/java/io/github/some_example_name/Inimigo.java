@@ -11,4 +11,16 @@ public abstract class Inimigo extends Nave {
     public boolean saiuDaTela() {
         return posX + tamX < 0;
     }
+
+    public int getPontos() {
+        return 100;
+    }
+
+    public Projetil atirar(float delta) {
+        return null;
+    }
+
+    public boolean morreNoToque() {
+        return true;
+    }
 }

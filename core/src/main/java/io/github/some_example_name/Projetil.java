@@ -9,6 +9,7 @@ public class Projetil {
     private int tamY = 10;
     private float velocidade = 1000;
     private int dano = 1;
+    private int direcao = 1;
     private Rectangle caixa;
 
     public Projetil(float posX, float posY) {
@@ -22,6 +23,14 @@ public class Projetil {
         this.dano = dano;
     }
 
+    public void setDirecao(int direcao) {
+        this.direcao = direcao;
+    }
+
+    public void setVelocidade(float velocidade) {
+        this.velocidade = velocidade;
+    }
+
     public int getDano() {
         return dano;
     }
@@ -31,7 +40,7 @@ public class Projetil {
     }
 
     public void atualizar(float delta) {
-        posX = posX + velocidade * delta;
+        posX = posX + velocidade * direcao * delta;
         caixa.set(posX, posY, tamX, tamY);
     }
 
@@ -52,7 +61,7 @@ public class Projetil {
     }
 
     public boolean saiuDaTela(float larguraTela) {
-        return posX > larguraTela;
+        return posX > larguraTela || posX + tamX < 0;
     }
 
 

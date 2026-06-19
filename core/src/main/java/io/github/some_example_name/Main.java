@@ -23,6 +23,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private BitmapFont font;
     private boolean gameOver;
+    private float tempo;
+    private Array<Projetil> projeteisInimigos;
 
     @Override
     public void create() {
@@ -38,11 +40,13 @@ public class Main extends ApplicationAdapter {
         projeteis = new Array<Projetil>();
         inimigos = new Array<Inimigo>();
         powerups = new Array<PowerUp>();
+        projeteisInimigos = new Array<Projetil>();
         esquadrao = new Esquadrao(nave);
         gerenciador = new GerenciadorOndas();
         gerenciadorPowerUps = new GerenciadorPowerUps();
         pontuacao = 0;
         gameOver = false;
+        tempo = 0;
     }
 
     @Override
@@ -65,6 +69,8 @@ public class Main extends ApplicationAdapter {
             return;
         }
 
+        tempo += delta;
+
         esquadrao.atirar(delta, projeteis);
 
         for (int i = projeteis.size - 1; i >= 0; i--) {
@@ -80,6 +86,10 @@ public class Main extends ApplicationAdapter {
         for (int i = inimigos.size - 1; i >= 0; i--) {
             Inimigo ini = inimigos.get(i);
             ini.atualizar(delta);
+            Projetil tiro = ini.atirar(delta);
+            if (tiro != null) {
+                projeteisInimigos.add(tiro);
+            }
             if (ini.saiuDaTela()) {
                 inimigos.removeIndex(i);
             }
@@ -93,8 +103,8 @@ public class Main extends ApplicationAdapter {
                     ini.receberDano(p.getDano());
                     projeteis.removeIndex(i);
                     if (ini.estaMorto()) {
+                        pontuacao += ini.getPontos();
                         inimigos.removeIndex(j);
-                        pontuacao += 100;
                     }
                     break;
                 }
@@ -106,8 +116,23 @@ public class Main extends ApplicationAdapter {
         for (int i = inimigos.size - 1; i >= 0; i--) {
             Inimigo ini = inimigos.get(i);
             if (esquadrao.colideCom(ini.getCaixa())) {
-                inimigos.removeIndex(i);
-                if (!esquadrao.removerAuxiliar()) {
+                if (ini.morreNoToque()) {
+                    inimigos.removeIndex(i);
+                }
+                if (esquadrao.levarDano()) {
+                    gameOver = true;
+                }
+            }
+        }
+
+        for (int i = projeteisInimigos.size - 1; i >= 0; i--) {
+            Projetil p = projeteisInimigos.get(i);
+            p.atualizar(delta);
+            if (p.saiuDaTela(Gdx.graphics.getWidth())) {
+                projeteisInimigos.removeIndex(i);
+            } else if (esquadrao.colideCom(p.getCaixa())) {
+                projeteisInimigos.removeIndex(i);
+                if (esquadrao.levarDano()) {
                     gameOver = true;
                 }
             }
@@ -137,6 +162,10 @@ public class Main extends ApplicationAdapter {
         for (Projetil p : projeteis) {
             shape.rect(p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY());
         }
+        shape.setColor(Color.MAGENTA);
+        for (Projetil p : projeteisInimigos) {
+            shape.rect(p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY());
+        }
         shape.setColor(Color.YELLOW);
         shape.rect(nave.getPosicaoX(), nave.getPosicaoY(), nave.getTamanhoX(), nave.getTamanhoY());
 
@@ -151,6 +180,12 @@ public class Main extends ApplicationAdapter {
             shape.rect(pu.getPosicaoX(), pu.getPosicaoY(), pu.getTamanhoX(), pu.getTamanhoY());
         }
         shape.end();
+
+        int altura = Gdx.graphics.getHeight();
+        batch.begin();
+        font.draw(batch, "Pontuacao: " + pontuacao, 20, altura - 20);
+        font.draw(batch, "Tempo: " + (int) tempo + "s", 20, altura - 60);
+        batch.end();
     }
 
     @Override

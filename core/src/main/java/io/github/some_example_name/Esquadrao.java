@@ -9,6 +9,8 @@ public class Esquadrao {
     private float[] offsetsX = {-30, -30, -60, -60};
     private float[] offsetsY = {25, -25, 50, -50};
     private static final int MAX_AUXILIARES = 4;
+    private static final float DURACAO_INVENCIVEL = 1f;
+    private float tempoInvencivel = 0;
 
     public Esquadrao(NaveJogador lider) {
         this.lider = lider;
@@ -16,6 +18,9 @@ public class Esquadrao {
     }
 
     public void mover(float delta) {
+        if (tempoInvencivel > 0) {
+            tempoInvencivel = tempoInvencivel - delta;
+        }
         lider.mover(delta);
         for (NaveAuxiliar aux : auxiliares) {
             aux.seguir(lider);
@@ -64,6 +69,14 @@ public class Esquadrao {
             return true;
         }
         return false;
+    }
+
+    public boolean levarDano() {
+        if (tempoInvencivel > 0) {
+            return false;
+        }
+        tempoInvencivel = DURACAO_INVENCIVEL;
+        return !removerAuxiliar();
     }
 
     public NaveJogador getLider() {
