@@ -1,5 +1,8 @@
 package io.github.some_example_name;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
+
 public abstract class Inimigo extends Nave {
 
     public Inimigo(float posX, float posY, int tamX, int tamY, int hp, float velocidade){
@@ -16,11 +19,18 @@ public abstract class Inimigo extends Nave {
         return 100;
     }
 
-    public Projetil atirar(float delta) {
-        return null;
+    public void atirar(float delta, Array<Projetil> tiros) {
     }
 
     public boolean morreNoToque() {
         return true;
+    }
+
+    public Color getCor() {
+        return Color.GREEN;
+    }
+
+    public boolean ehChefe() {
+        return false;
     }
 }

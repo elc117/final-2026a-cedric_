@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
@@ -22,7 +23,9 @@ public class Main extends ApplicationAdapter {
     private GerenciadorPowerUps gerenciadorPowerUps;
     private SpriteBatch batch;
     private BitmapFont font;
+    private GlyphLayout layout;
     private boolean gameOver;
+    private boolean iniciado;
     private float tempo;
     private Array<Projetil> projeteisInimigos;
 
@@ -32,7 +35,9 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.getData().setScale(2f);
+        layout = new GlyphLayout();
         iniciar();
+        iniciado = false;
     }
 
     private void iniciar() {
@@ -55,13 +60,27 @@ public class Main extends ApplicationAdapter {
 
         float delta = Gdx.graphics.getDeltaTime();
 
-        if (gameOver) {
-            int largura = Gdx.graphics.getWidth();
-            int altura = Gdx.graphics.getHeight();
+        if (!iniciado) {
+            float altura = Gdx.graphics.getHeight();
             batch.begin();
-            font.draw(batch, "GAME OVER", largura / 2f - 90, altura / 2f + 60);
-            font.draw(batch, "Pontuacao: " + pontuacao, largura / 2f - 90, altura / 2f);
-            font.draw(batch, "ENTER para recomecar", largura / 2f - 130, altura / 2f - 60);
+            desenharCentralizado("Mover: WASD / Setas", altura / 2f + 60);
+            desenharCentralizado("Atirar: ESPAÇO", altura / 2f);
+            desenharCentralizado("ENTER para começar", altura / 2f - 60);
+            batch.end();
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                iniciar();
+                iniciado = true;
+            }
+            return;
+        }
+
+        if (gameOver) {
+            float altura = Gdx.graphics.getHeight();
+            batch.begin();
+            desenharCentralizado("FIM DE JOGO", altura / 2f + 90);
+            desenharCentralizado("Pontuação: " + pontuacao, altura / 2f + 30);
+            desenharCentralizado("Tempo: " + (int) tempo + "s", altura / 2f - 30);
+            desenharCentralizado("ENTER para recomeçar", altura / 2f - 90);
             batch.end();
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 iniciar();
@@ -86,10 +105,7 @@ public class Main extends ApplicationAdapter {
         for (int i = inimigos.size - 1; i >= 0; i--) {
             Inimigo ini = inimigos.get(i);
             ini.atualizar(delta);
-            Projetil tiro = ini.atirar(delta);
-            if (tiro != null) {
-                projeteisInimigos.add(tiro);
-            }
+            ini.atirar(delta, projeteisInimigos);
             if (ini.saiuDaTela()) {
                 inimigos.removeIndex(i);
             }
@@ -154,8 +170,8 @@ public class Main extends ApplicationAdapter {
         }
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setColor(Color.GREEN);
         for (Inimigo ini : inimigos) {
+            shape.setColor(ini.getCor());
             shape.rect(ini.getPosicaoX(), ini.getPosicaoY(), ini.getTamanhoX(), ini.getTamanhoY());
         }
         shape.setColor(Color.RED);
@@ -183,9 +199,14 @@ public class Main extends ApplicationAdapter {
 
         int altura = Gdx.graphics.getHeight();
         batch.begin();
-        font.draw(batch, "Pontuacao: " + pontuacao, 20, altura - 20);
+        font.draw(batch, "Pontuação: " + pontuacao, 20, altura - 20);
         font.draw(batch, "Tempo: " + (int) tempo + "s", 20, altura - 60);
         batch.end();
+    }
+
+    private void desenharCentralizado(String texto, float y) {
+        layout.setText(font, texto);
+        font.draw(batch, layout, (Gdx.graphics.getWidth() - layout.width) / 2f, y);
     }
 
     @Override

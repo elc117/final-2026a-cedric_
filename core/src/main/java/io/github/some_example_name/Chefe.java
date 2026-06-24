@@ -1,6 +1,8 @@
 package io.github.some_example_name;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 
 public class Chefe extends Inimigo {
     private float alvoX;
@@ -8,7 +10,7 @@ public class Chefe extends Inimigo {
     private float velocidadeVertical = 200;
     private int direcaoVertical = 1;
     private float tempoUltimoTiro = 0;
-    private float intervaloTiro = 1.2f;
+    private float intervaloTiro = 0.6f;
 
     public Chefe(float posX, float posY, int tamX, int tamY, int hp, float velocidade) {
         super(posX, posY, tamX, tamY, hp, velocidade);
@@ -42,23 +44,35 @@ public class Chefe extends Inimigo {
     }
 
     @Override
-    public Projetil atirar(float delta) {
+    public void atirar(float delta, Array<Projetil> tiros) {
         if (!chegou) {
-            return null;
+            return;
         }
         tempoUltimoTiro = tempoUltimoTiro + delta;
         if (tempoUltimoTiro >= intervaloTiro) {
             tempoUltimoTiro = 0;
-            Projetil tiro = new Projetil(posX, posY + tamY / 2f);
-            tiro.setDirecao(-1);
-            tiro.setVelocidade(450);
-            return tiro;
+            float centroY = posY + tamY / 2f;
+            for (int i = 0; i < 3; i++) {
+                Projetil tiro = new Projetil(posX, centroY + (i - 1f) * 50f);
+                tiro.setDirecao(-1);
+                tiro.setVelocidade(450);
+                tiros.add(tiro);
+            }
         }
-        return null;
     }
 
     @Override
     public boolean morreNoToque() {
         return false;
+    }
+
+    @Override
+    public Color getCor() {
+        return Color.RED;
+    }
+
+    @Override
+    public boolean ehChefe() {
+        return true;
     }
 }
