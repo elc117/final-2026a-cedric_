@@ -1,3 +1,4 @@
+
 # Relatório Projeto
 
 ## Identificação
@@ -42,7 +43,8 @@ Na raiz do projeto, execute:
 
 Vídeo curto demonstrando uma partida (esquadrão crescendo, ondas de inimigos e o chefe):
 
-https://github.com/elc117/final-2026a-cedric_/raw/main/imagens/gameplay.mp4
+[https://github.com/elc117/final-2026a-cedric_/raw/main/imagens/gameplay.mp4](https://github.com/user-attachments/assets/75cdbd99-75c6-4209-a92f-578a41797ffe
+)
 
 ## Referências e créditos
 
