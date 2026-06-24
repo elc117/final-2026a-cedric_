@@ -5,21 +5,24 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 public class GerenciadorOndas {
-    private static final float TEMPO_DO_CHEFE = 40f;
+    private static final float INTERVALO_CHEFE = 45f;
+    private static final float BONUS_VELOCIDADE_POR_ONDA = 30f;
+    private static final float BONUS_VELOCIDADE_MAX = 200f;
     private int onda = 1;
-    private int inimigosPorOnda = 5;
+    private int inimigosPorOnda = 30;
     private int spawnadosNaOnda = 0;
     private float tempoDesdeSpawn = 0;
-    private float intervaloSpawn = 1.5f;
-    private float tempoTotal = 0;
-    private boolean chefeSpawnado = false;
+    private float intervaloSpawn = 0.9f;
+    private float tempoDesdeChefe = 0;
+    private float bonusVelocidade = 0;
 
     public void atualizar(float delta, Array<Inimigo> inimigos) {
-        tempoTotal = tempoTotal + delta;
-
-        if (!chefeSpawnado && tempoTotal >= TEMPO_DO_CHEFE) {
-            spawnarChefe(inimigos);
-            chefeSpawnado = true;
+        tempoDesdeChefe = tempoDesdeChefe + delta;
+        if (tempoDesdeChefe >= INTERVALO_CHEFE) {
+            tempoDesdeChefe = 0;
+            if (!temChefe(inimigos)) {
+                spawnarChefe(inimigos);
+            }
         }
 
         tempoDesdeSpawn = tempoDesdeSpawn + delta;
@@ -35,12 +38,21 @@ public class GerenciadorOndas {
         }
     }
 
+    private boolean temChefe(Array<Inimigo> inimigos) {
+        for (Inimigo ini : inimigos) {
+            if (ini.ehChefe()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void spawnar(Array<Inimigo> inimigos) {
         float y = MathUtils.random(0, Gdx.graphics.getHeight() - 50);
-        if (MathUtils.randomBoolean(0.3f)) {
-            inimigos.add(new InimigoAtirador(Gdx.graphics.getWidth(), y, 50, 50, 5, 120));
+        if (MathUtils.randomBoolean(0.7f)) {
+            inimigos.add(new InimigoAtirador(Gdx.graphics.getWidth(), y, 50, 50, 5, 250 + bonusVelocidade));
         } else {
-            inimigos.add(new InimigoComum(Gdx.graphics.getWidth(), y, 50, 50, 3, 150));
+            inimigos.add(new InimigoComum(Gdx.graphics.getWidth(), y, 50, 50, 3, 500 + bonusVelocidade));
         }
     }
 
@@ -52,8 +64,9 @@ public class GerenciadorOndas {
     private void avancarOnda() {
         onda = onda + 1;
         spawnadosNaOnda = 0;
-        inimigosPorOnda = inimigosPorOnda + 2;
+        inimigosPorOnda = inimigosPorOnda + 6;
         intervaloSpawn = Math.max(0.5f, intervaloSpawn - 0.15f);
+        bonusVelocidade = Math.min(BONUS_VELOCIDADE_MAX, bonusVelocidade + BONUS_VELOCIDADE_POR_ONDA);
     }
 
     public int getOnda() {
