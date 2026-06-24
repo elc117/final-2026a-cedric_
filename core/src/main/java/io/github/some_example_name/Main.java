@@ -5,11 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 
 public class Main extends ApplicationAdapter {
     private ShapeRenderer shape;
@@ -24,6 +26,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private BitmapFont font;
     private GlyphLayout layout;
+    private CampoDeEstrelas estrelas;
+    private ObjectMap<String, Texture> texturas;
     private boolean gameOver;
     private boolean iniciado;
     private float tempo;
@@ -36,6 +40,14 @@ public class Main extends ApplicationAdapter {
         font = new BitmapFont();
         font.getData().setScale(2f);
         layout = new GlyphLayout();
+        estrelas = new CampoDeEstrelas(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        texturas = new ObjectMap<String, Texture>();
+        carregarTextura("navejogador.png");
+        carregarTextura("naveauxiliar.png");
+        carregarTextura("inimigocomum.png");
+        carregarTextura("inimigoatirador.png");
+        carregarTextura("chefeinimigo.png");
+        carregarTextura("tiros.png");
         iniciar();
         iniciado = false;
     }
@@ -59,6 +71,14 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float delta = Gdx.graphics.getDeltaTime();
+
+        estrelas.atualizar(delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        for (Estrela e : estrelas.getEstrelas()) {
+            shape.setColor(e.getBrilho(), e.getBrilho(), e.getBrilho(), 1);
+            shape.rect(e.getPosicaoX(), e.getPosicaoY(), e.getTamanho(), e.getTamanho());
+        }
+        shape.end();
 
         if (!iniciado) {
             float altura = Gdx.graphics.getHeight();
@@ -170,38 +190,45 @@ public class Main extends ApplicationAdapter {
         }
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        for (Inimigo ini : inimigos) {
-            shape.setColor(ini.getCor());
-            shape.rect(ini.getPosicaoX(), ini.getPosicaoY(), ini.getTamanhoX(), ini.getTamanhoY());
-        }
-        shape.setColor(Color.RED);
-        for (Projetil p : projeteis) {
-            shape.rect(p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY());
-        }
-        shape.setColor(Color.MAGENTA);
-        for (Projetil p : projeteisInimigos) {
-            shape.rect(p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY());
-        }
-        shape.setColor(Color.YELLOW);
-        shape.rect(nave.getPosicaoX(), nave.getPosicaoY(), nave.getTamanhoX(), nave.getTamanhoY());
-
-        shape.setColor(Color.ORANGE);
-
-        for(NaveAuxiliar aux : esquadrao.getAuxiliares()){
-            shape.rect(aux.getPosicaoX(), aux.getPosicaoY(), aux.getTamanhoX(), aux.getTamanhoY());
-        }
-
         shape.setColor(Color.CYAN);
         for (PowerUp pu : powerups) {
             shape.rect(pu.getPosicaoX(), pu.getPosicaoY(), pu.getTamanhoX(), pu.getTamanhoY());
         }
         shape.end();
 
-        int altura = Gdx.graphics.getHeight();
         batch.begin();
+        for (Inimigo ini : inimigos) {
+            Texture t = texturas.get(ini.getSprite());
+            batch.draw(t, ini.getPosicaoX(), ini.getPosicaoY(), ini.getTamanhoX(), ini.getTamanhoY(),
+                0, 0, t.getWidth(), t.getHeight(), true, false);
+        }
+        Texture tiro = texturas.get("tiros.png");
+        for (Projetil p : projeteis) {
+            batch.draw(tiro, p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY());
+        }
+        for (Projetil p : projeteisInimigos) {
+            batch.draw(tiro, p.getPosicaoX(), p.getPosicaoY(), p.getTamanhoX(), p.getTamanhoY(),
+                0, 0, tiro.getWidth(), tiro.getHeight(), true, false);
+        }
+        boolean esquadraoVisivel = !(esquadrao.estaInvencivel() && (int) (tempo * 10) % 2 == 0);
+        if (esquadraoVisivel) {
+            batch.draw(texturas.get("navejogador.png"), nave.getPosicaoX(), nave.getPosicaoY(),
+                nave.getTamanhoX(), nave.getTamanhoY());
+            Texture tAux = texturas.get("naveauxiliar.png");
+            for (NaveAuxiliar aux : esquadrao.getAuxiliares()) {
+                batch.draw(tAux, aux.getPosicaoX(), aux.getPosicaoY(), aux.getTamanhoX(), aux.getTamanhoY());
+            }
+        }
+        int altura = Gdx.graphics.getHeight();
         font.draw(batch, "Pontuação: " + pontuacao, 20, altura - 20);
         font.draw(batch, "Tempo: " + (int) tempo + "s", 20, altura - 60);
         batch.end();
+    }
+
+    private void carregarTextura(String nome) {
+        Texture t = new Texture(Gdx.files.internal(nome));
+        t.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        texturas.put(nome, t);
     }
 
     private void desenharCentralizado(String texto, float y) {
@@ -214,6 +241,9 @@ public class Main extends ApplicationAdapter {
         shape.dispose();
         batch.dispose();
         font.dispose();
+        for (Texture t : texturas.values()) {
+            t.dispose();
+        }
     }
 
     @Override

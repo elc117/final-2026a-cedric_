@@ -38,4 +38,9 @@ public class InimigoAtirador extends Inimigo {
     public Color getCor() {
         return Color.PURPLE;
     }
+
+    @Override
+    public String getSprite() {
+        return "inimigoatirador.png";
+    }
 }

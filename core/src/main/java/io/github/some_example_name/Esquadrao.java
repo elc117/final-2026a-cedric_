@@ -79,6 +79,10 @@ public class Esquadrao {
         return !removerAuxiliar();
     }
 
+    public boolean estaInvencivel() {
+        return tempoInvencivel > 0;
+    }
+
     public NaveJogador getLider() {
         return lider;
     }

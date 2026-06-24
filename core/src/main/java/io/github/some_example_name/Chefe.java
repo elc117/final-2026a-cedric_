@@ -75,4 +75,9 @@ public class Chefe extends Inimigo {
     public boolean ehChefe() {
         return true;
     }
+
+    @Override
+    public String getSprite() {
+        return "chefeinimigo.png";
+    }
 }

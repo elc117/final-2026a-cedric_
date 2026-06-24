@@ -33,4 +33,8 @@ public abstract class Inimigo extends Nave {
     public boolean ehChefe() {
         return false;
     }
+
+    public String getSprite() {
+        return "inimigocomum.png";
+    }
 }
