@@ -12,6 +12,7 @@ Entre as funcionalidades estão presentes: movimentação da nave pelo teclado, 
 
 ## Processo de desenvolvimento
 
+O processo de desenvolvimento se deu de forma bastante iterativa e incremental. O primeiro contato com o framework e escopo (desenvolvimento de jogo) foi lento por minha falta de experiência, porém, consegui uma evolução gradual até chegar no produto final. O primeiro problema encontrado se deu nas dependências do projeto, que foi rapidamente solucionado com ajuda de IA, o que estava acontecendo era incopatibilidade numa das versões de uma das dependências, isso foi solucionado ao remover a dependência, já que ao realizar uma breve pesquisa, constatatou-se que ela não seria necessária. Então eu parti para o desenvolvimento, inicialmente eu comecei a procurar entender como funcionava a estrutura do projeto, depois eu fui para a pasta core, na main, lá estudei e fiz teste nos métodos create e render, que são toda base do jogo no libGDX. Após imprimir um quadrado na tela (que representava a nave do jogador e posteriormete sua hitbox), procurei entender como poderia se dar a movimentação dos objetos na tela e depois o dano (sobreposição de objetos). E então continuei adicionando objeto por objeto, definindo seus métodos, classes, e suas relações de forma evolutiva (sem um planejamento prévio). Buscando sempre aplicar o conteúdo visto em sala, e ter coerência com genêro do jogo. Na proposta incial eu havia estipulado que as naves poderiam tiros em direções diferentes, após testes, achei melhor a mira fixa e remover esse requisito, já que ele não era essencial para os objetivos do trabalho. Para mim o mais complexo foi a lógica de jogo em si, por ter que lidar com um código caracterizado por uma  execução/renderização constante. Em suma, acho que consegui desenvolver um trabalho que atendeu os requistos e finalidade proposta.
 
 
 ## Diagrama de classes
@@ -51,6 +52,48 @@ Vídeo curto demonstrando uma partida (esquadrão crescendo, ondas de inimigos e
 - [libGDX](https://libgdx.com/) 1.14.1: framework do jogo (renderização, entrada, ciclo de vida). Projeto gerado a partir do template do [https://libgdx.com/wiki/start/project-generation](https://libgdx.com/wiki/start/project-generation).
 - [gdx-ai](https://github.com/libgdx/gdx-ai) 1.8.2 e [gdx-controllers](https://github.com/libgdx/gdx-controllers) 2.2.4: dependências incluídas pelo template, mas não utilizadas no jogo.
 - [documentação do libGDX](https://libgdx.com/wiki/): ciclo de vida, SpriteBatch, OrthographicCamera e carregamento de assets.
-- Sprites das naves, inimigos e tiros foram gerados com chat gpt. Prompt utilizados: Crie um conjunto de sprites em pixel art para os seguintes objetos:Nave do jogador 40×15, Nave auxiliar 40×15, Inimigo comum 50×50, Inimigo atirador 50×50, Chefe 120×120 e Tiro do jogador 20×10.
+- [playlist de vídeos sobre desenvolvimento libGDX](https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt) me auxiliou nas etapas inciais.
+- Sprites das naves, inimigos e tiros foram gerados com ChatGPT. Prompt utilizado: "Crie um conjunto de sprites em pixel art para os seguintes objetos: Nave do jogador 40×15, Nave auxiliar 40×15, Inimigo comum 50×50, Inimigo atirador 50×50, Chefe 120×120 e Tiro do jogador 20×10."
 - Diagramas de classes gerados com [Mermaid](https://mermaid.ai/).
+- As classes puramente estéticas (Estrela e CampoDeEstrelas) foram geradas com Claude sonnet 4.6 (alto pensamento).
+- Para auxílio no desenvolvimento, auxílio conceitual e revisão de código foi utilizado o Claude Sonnet 4.6. Exemplos:
 
+**1. Erro de build apenas no módulo html**
+
+> Estou tendo um erro de build, o desktop lwjgl3 roda normalmente, o erro só acontece no módulo html. O que está causando isso?
+>
+> ```
+> [ERROR] Errors in '...box2dlights-1.5-sources.jar!/box2dLight/Spinor.java'
+> [ERROR] Line 4: The import com.badlogic.gdx.utils.StringBuilder cannot be resolved
+> [ERROR] Aborting compile due to errors in some input files
+> ```
+
+Resposta (resumida): o módulo html usa GWT para traduzir Java em JavaScript, e o box2dlights não foi feito para ser compatível com GWT — por isso só o build web falha e o desktop roda normal. Solução: remover a dependência do box2dlights (e do Box2D, se também estiver presente) nos `build.gradle` (raiz, core, html) e no `GdxDefinition.gwt.xml`. Como o jogo usa colisão por `Rectangle`, não precisa de física, então remover não afeta o gameplay.
+
+**2. Fixar o chefe no canto direito da tela**
+
+> A classe Chefe possui o método `atualizar` herdado de Nave; as outras classes de inimigos já possuem uma movimentação da direita para a esquerda, porém eu gostaria que a nave chefe ficasse fixa no canto direito da tela até ser destruída. Como posso alterar o método `atualizar` para que faça isso? [código InimigoAtirador], [código Inimigo], [código InimigoComum].
+
+Resposta (resumida): a forma mais simples é sobrescrever `atualizar` na Chefe para que ela não se mova — basta fixar `posX` no canto direito e só atualizar a caixa de colisão. Diferente do InimigoComum (que faz `posX = posX - velocidade * delta`), o chefe não decrementa o `posX`:
+
+```java
+@Override
+public void atualizar(float delta) {
+    posX = Gdx.graphics.getWidth() - tamX - 60;
+    atualizarCaixa();
+}
+```
+
+**3. Nave principal não aparece na tela**
+
+> Está ocorrendo um erro na main, não estou conseguindo desenhar na tela a nave principal. A que se deve isso?
+
+Resposta (resumida): o problema é desenhar fora do bloco `batch.begin()`/`batch.end()` — ou com o `ShapeRenderer` ainda aberto. No libGDX você não pode ter `shape.begin()` e `batch.begin()` ativos ao mesmo tempo. Se a nave for desenhada antes de fechar o `shape.end()` (das estrelas/powerups), o draw é descartado e nada aparece. A nave precisa estar entre `batch.begin()` e `batch.end()`, depois que todo `ShapeRenderer` já fez `end()`:
+
+```text
+shape.end();        // fecha as estrelas
+batch.begin();
+batch.draw(texturas.get("navejogador.png"), nave.getPosicaoX(), nave.getPosicaoY(),
+        nave.getTamanhoX(), nave.getTamanhoY());
+batch.end();
+```
